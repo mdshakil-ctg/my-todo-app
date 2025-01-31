@@ -10,6 +10,7 @@ function App() {
       <div className='bg-amber-300 text-center text-3xl'>
         <h1>Hello World</h1>
         <p>How was the day?</p>
+        <p>check the github repository</p>
       </div>
     </>
   )
