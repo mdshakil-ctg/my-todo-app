@@ -12,6 +12,8 @@ function App() {
         <h1>Hello World</h1>
         <p>How was the day?</p>
         <p>check the git command for automatic update for vercel</p>
+        <p>this is new line for check the feature branches update</p>
+        <p>add text for feature branch</p>
       </div>
     </>
   )
