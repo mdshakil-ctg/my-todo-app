@@ -1,50 +1,72 @@
-import React from "react";
-import { useState } from "react";
+import { lazy, Suspense } from "react";
 import "./App.css";
+import ReactMemo from "./ReactMemo";
+import { ErrorBoundary } from "react-error-boundary";
+import PropTypes from "prop-types";
+const UserCard = lazy(()=> import('./UserCard '))
+const UseCallback = lazy(()=> import('./UseCallback'))
 
-import PropTypes from 'prop-types';
-// import UserCard from './UserCard ';
-
-
-const ChildComponent = React.memo(({ count }) => {
-  console.log("Child rendered", count);
-  return <p>Count: {count}</p>;
-});
-
-
-ChildComponent.displayName = 'ChildComponent'
+function ExampleErrorBoundary (){
+  throw new Error('An error occurred in the exampleError Component')
+}
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  console.log("parent component rendered");
-  
-  return (
-    <>
-      <div className="bg-amber-300 text-center text-3xl">
-        
-        <p>Simple Todo App</p>
-        <button className="bg-blue-800 p-2" onClick={() => setCount((prev) => prev + 1)}>
-          Increment: {count}
-        </button>
-        <ChildComponent count={count} />
-        {/* <UserCard
-          name="John Doe"
-          age='28'
-          isAdmin={true}
-          hobbies={["Coding", "Reading", "Gaming"]}
-          address={{ city: "New York", country: "USA" }}
-          onClick={() => alert("User clicked!")}
-        /> */}
-        {/* <ReactMemo/> */}
+console.log('render app component')
+  // eslint-disable-next-line react/prop-types
+  function Fallback({error, resetErrorBoundary}){
+    console.log({error})
+    return (
+      <div>
+        <p>Something went wrong...</p>
+        <pre>{error.message}</pre>
+        <button onClick={resetErrorBoundary}>Try Again</button>
       </div>
-    </>
+    )
+  }
+
+
+
+  Fallback.propTypes = {
+    error: PropTypes.instanceOf(Error).isRequired,
+    resetErrorBoundary: PropTypes.func.isRequired
+  }
+
+  return (
+    <div>
+      <h1 className="text-center text-3xl">
+        The concept of react lazy loading and code splitting
+      </h1>
+      <ErrorBoundary FallbackComponent={Fallback} onReset={(details) =>{ 
+        console.log({details})
+        }} >
+
+        <ExampleErrorBoundary/>
+      </ErrorBoundary>
+
+      {/* usercard lazy loading */}
+      <Suspense fallback={<div>loading...usercard</div>}>
+      <UserCard
+        name="shakil"
+        age="30"
+        isAdmin={true}
+        hobbies={["cricket", "badminton", "kolapata"]}
+        address={{ city: "chittagong", country: "Bangladesh" }}
+        onClick={() => alert("usercard onclick clicked")}
+      />
+      </Suspense>
+
+      {/* reactmemo lazy loading */}
+      <Suspense fallback={<div>loading...reactmemo</div>}>
+      <ReactMemo />
+      </Suspense>
+
+      {/* usecallback lazy loading */}
+      <Suspense fallback={<div>loading...usecallback</div>}>
+      <UseCallback />
+      </Suspense>
+    </div>
   );
 }
 
 export default App;
 
-
-ChildComponent.propTypes = {
-count: PropTypes.number.isRequired,
-}
